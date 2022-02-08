@@ -34,7 +34,7 @@
 
 executables/*
 dev/test/tempdir/*
-molecular_io/dev/doc/
+dev/doc/
 *.save
 *.xml
 *.in
