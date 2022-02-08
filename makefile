@@ -10,7 +10,7 @@ linking_flags = -g -fcheck=all -Wall
 compile_flags = $(linking_flags)
 
 # Name of library file
-lib_name := libmolecularIO.a
+lib_name := libperiodicIO.a
 
 # install directory for executables:
 install_exec_dir := $(HOME)/bin

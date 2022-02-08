@@ -6,7 +6,7 @@ fc := gfortran
 linking_flags = -Ofast -llapack -lblas -fopenmp
 compile_flags = $(linking_flags)
 
-molecular_io_lib=../../bin/libmolecularIO.a
+molecular_io_lib=../../bin/libperiodicIO.a
 
 SOURCES := $(wildcard $(SRC)/*.f90)
 OBJECTS := $(patsubst $(SRC)/%.f90, $(OBJ)/%.o, $(SOURCES))
