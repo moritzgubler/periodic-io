@@ -76,11 +76,13 @@ debug:
 	@echo "lib_file = $(lib_file)"
 	@echo "programs = $(programs)"
 
-test: $(programs)
+test: $(programs) $(lib_file)
+	${MAKE} -C dev/test/test_src_fingerprint
 	(cd dev/test && ./test_all.sh)
 
 clean:
 	rm -rf $(bin_dir) $(prog_dir)
+	$(MAKE) -C dev/test/test_src_fingerprint clean
 
 install: install_lib install_bin
 
