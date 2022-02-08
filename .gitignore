@@ -34,6 +34,7 @@
 
 executables/*
 dev/test/tempdir/*
+dev/test/test_src_fingerprint/fingerprint_distance
 dev/doc/
 *.save
 *.xml
