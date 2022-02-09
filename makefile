@@ -56,7 +56,7 @@ lib_file := $(bin_dir)/$(lib_name)
 programs := $(patsubst $(src_transform_dir)/%.f90, $(prog_dir)/%, $(src_transform))
 
 # set phony targets
-.PHONY: default debug clean install_bin install_lib install test doc
+.PHONY: default debug clean install_bin install_lib install test doc uninstall
 
 default: $(programs) $(lib_file)
 
@@ -85,6 +85,10 @@ clean:
 	$(MAKE) -C dev/test/test_src_fingerprint clean
 
 install: install_lib install_bin
+
+uninstall:
+	rm -f $(install_lib_dir)/$(lib_name)
+	rm -f $(patsubst $(prog_dir)/%, $(install_exec_dir)/%, $(programs))
 
 install_bin: $(programs) | $(install_exec_dir)
 	cp $(prog_dir)/* $(install_exec_dir)/.
