@@ -15,7 +15,7 @@ subroutine read_cif(filename,nat , rxyz, alat, atomnames, comment)
   character(len=80), intent(out) :: comment
   !! string that was read from first comment line
   integer :: io, ios, lc, k
-  character(len=250) :: all_line
+  character(len=250) :: all_line, num_string
   real*8 :: length_a, length_b, length_c
   real*8 :: alpha, beta, gamma
   logical :: aset = .FALSE., bset = .FALSE., cset = .FALSE.
@@ -63,37 +63,73 @@ subroutine read_cif(filename,nat , rxyz, alat, atomnames, comment)
     end if
     k = index(all_line, "_cell_length_a")
     if ( k == 1) then !! line contains cell length a
-      read(all_line((k+15):len_trim(all_line)), *) length_a
+      num_string = all_line((k+15):len_trim(all_line))
+      call remove_uncert_from_numstring(num_string)
+      read(num_string, *, iostat=ios) length_a
+      if ( ios /= 0 ) then
+        print*, 'error reading cell length a'
+        print*, trim(all_line)
+        stop 'error reading _cell_length_a in read_cif periodicIO'
+      end if
       aset = .TRUE.
       cycle
     end if
     k = index(all_line, "_cell_length_b")
     if ( k == 1) then !! line contains cell length b
-      read(all_line((k+15):len_trim(all_line)), *) length_b
+      num_string = all_line((k+15):len_trim(all_line))
+      call remove_uncert_from_numstring(num_string)
+      read(num_string, *, iostat=ios) length_b
+      if(ios /=0) then
+        print*, 'error reading cell length b'
+        print*, trim(all_line)
+        stop 'error reading _cell_length_b in read_cif periodicIO'
+      end if
       bset = .TRUE.
       cycle
     end if
     k = index(all_line, "_cell_length_c")
     if ( k == 1) then !! line contains cell length c
-      read(all_line((k+15):len_trim(all_line)), *) length_c
+      num_string = all_line((k+15):len_trim(all_line))
+      call remove_uncert_from_numstring(num_string)
+      read(num_string, *, iostat=ios) length_c
+      if(ios /=0) then
+        print*, 'error reading cell length c'
+        print*, trim(all_line)
+        stop 'error reading _cell_length_c in read_cif periodicIO'
+      end if
       cset = .TRUE.
       cycle
     end if
     k = index(all_line, "_cell_angle_alpha")
     if ( k == 1) then !! line contains angle alpha
-      read(all_line((k+18):len_trim(all_line)), *) alpha
+      num_string = all_line((k+18):len_trim(all_line))
+      call remove_uncert_from_numstring(num_string)
+      read(num_string, *, iostat=ios) alpha
+      if ( ios /= 0 ) then
+        stop 'error reading cell_angle_alpha in readcif'
+      end if
       aaset = .TRUE.
       cycle
     end if
     k = index(all_line, "_cell_angle_beta")
     if ( k == 1) then !! line contains angle beta
-      read(all_line((k+17):len_trim(all_line)), *) beta
+      num_string = all_line((k+17):len_trim(all_line))
+      call remove_uncert_from_numstring(num_string)
+      read(num_string, *, iostat=ios) beta
+      if ( ios /= 0 ) then
+        stop 'error reading cell_angle_beta in readcif'
+      end if
       bbset = .TRUE.
       cycle
     end if
     k = index(all_line, "_cell_angle_gamma")
     if ( k == 1) then !! line contains angle gamma
-      read(all_line((k+18):len_trim(all_line)), *) gamma
+      num_string = all_line((k+18):len_trim(all_line))
+      call remove_uncert_from_numstring(num_string)
+      read(num_string, *, iostat=ios) gamma
+      if ( ios /= 0 ) then
+        stop 'error reading cell_angle_gamma in readcif'
+      end if
       ccset = .TRUE.
       cycle
     end if
@@ -166,6 +202,28 @@ contains
     end if
     alat(3,3) = sqrt(length_c**2 - alat(1,3)**2 - alat(2,3)**2)
   end subroutine calcAlat
+
+  subroutine remove_uncert_from_numstring(numstr)
+    !! in some .cif file numbers are written with brackets in the end: 3.141(5)
+    !! This subroutine removes these brackets and the number in between them.
+    implicit none
+    character(len=*), intent(inout) :: numstr
+    !! string that may contain brackets that will be removed if present.
+    integer :: len_word, numwords, brack_index
+
+    len_word = len(numstr)
+    call get_num_words(numstr, numwords, len_word)
+    if ( numwords /= 1 ) then
+      print*, trim(numstr)
+      print*, numwords
+      stop 'multiple words supplied in remove_encert_from_numstr'
+    end if
+
+    brack_index = index(numstr, '(')
+    if (brack_index <= 0) return
+    numstr(brack_index:len_word) = ''
+  end subroutine remove_uncert_from_numstring
+
 end subroutine read_cif
 
 subroutine get_nat_cif(filename, nat)

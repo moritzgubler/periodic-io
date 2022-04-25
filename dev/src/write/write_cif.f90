@@ -6,9 +6,9 @@ subroutine write_cif(filename, nat, rxyz, alat, atomnames, comment)
   character(len=*) :: filename
   !! name of the file
   real*8, intent(in), dimension(3, nat) :: rxyz
-  !! positions of the atoms (bohr)
+  !! positions of the atoms (units in bohr)
   real*8, dimension(3,3), intent(in) :: alat
-  !! lattice vectors (bohr)
+  !! lattice vectors (units in bohr)
   character(len=2), dimension(nat), intent(in) :: atomnames
   !! chemical names of the atoms
   character(len=80), intent(in) :: comment

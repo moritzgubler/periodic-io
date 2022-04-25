@@ -21,7 +21,7 @@ subroutine write_periodic(filename, nat, rxyz, alat, atomnames, comment)
   vaspind = index(filename, 'POSCAR')
   l = len_trim(filename)
 
-  if ( l - vaspind == 5) then !! vasp file
+  if ( l - vaspind == 5 .and. vaspind > 0) then !! vasp file
     call write_vasp(filename, nat, rxyz, alat, atomnames, comment)
     return
   end if

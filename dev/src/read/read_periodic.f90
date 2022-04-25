@@ -21,7 +21,7 @@ subroutine read_periodic(filename, nat, rxyz, alat, atomnames, comment)
   vaspind = index(filename, 'POSCAR')
   l = len_trim(filename)
   !if (vaspind > 0) print*, 'vaspind', l -vaspind
-  if ( l - vaspind == 5) then !! vasp file
+  if ( l - vaspind == 5 .and. vaspind > 0) then !! vasp file
     call read_vasp(filename, nat, rxyz, alat, atomnames, comment)
     return
   end if
@@ -62,7 +62,7 @@ subroutine get_nat_periodic(filename, nat)
   vaspind = index(filename, 'POSCAR')
   l = len_trim(filename)
   !if (vaspind > 0) print*, 'vaspind', l -vaspind
-  if ( l - vaspind == 5) then !! vasp file
+  if ( l - vaspind == 5 .and. vaspind > 0) then !! vasp file
     call get_nat_vasp(filename, nat)
     return
   end if
