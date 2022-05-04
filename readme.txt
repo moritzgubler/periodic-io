@@ -1,6 +1,9 @@
 This project creates a library that will be able to read and write most of the
 atomic file formats. It also contains conversion software that allows you to
 convert the atomic easily to other formats.
+In a addition to that some mini apps are provided that calculate the fingerprint distance
+between multiple structures. The code for calculating the overlap matrix fingerprint
+was taken from Marco Krummenachers repository (https://github.com/KrumaKruma/Fingerprint).
 
 The cif reader does not support the full cif standard yet. Nevertheless it should
 be able to read most of the files. It is designed to read cifs from
