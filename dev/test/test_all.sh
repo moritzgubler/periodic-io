@@ -4,7 +4,6 @@ tempdir=tempdir
 mkdir -p $tempdir
 
 tester=../../executables/transform-periodic
-ls $tester
 
 tol=0.0001
 
