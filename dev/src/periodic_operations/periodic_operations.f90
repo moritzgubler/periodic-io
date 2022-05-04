@@ -20,7 +20,7 @@ subroutine cart2frac(nat, alat, rxyz, xyzred)
   div = alat(1, 1)*alat(2, 2)*alat(3, 3) - alat(1, 1)*alat(2, 3)*alat(3, 2) - &
         alat(1, 2)*alat(2, 1)*alat(3, 3) + alat(1, 2)*alat(2, 3)*alat(3, 1) + &
         alat(1, 3)*alat(2, 1)*alat(3, 2) - alat(1, 3)*alat(2, 2)*alat(3, 1)
-  if ( div < 1.d-7 ) then
+  if ( abs(div) < 1.d-7 ) then
     stop "cell is singular in cart2frac"
   end if
   div = 1.d0/div

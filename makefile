@@ -8,6 +8,7 @@
 fc := gfortran
 linking_flags = -g -fcheck=all -Wall
 compile_flags = $(linking_flags)
+lapack = -llapack -lblas
 
 # Name of library file
 lib_name := libperiodicIO.a
@@ -32,6 +33,8 @@ src_read_dir := dev/src/read
 src_write_dir := dev/src/write
 src_transform_dir := dev/src/transform
 src_periodic_dir := dev/src/periodic_operations
+src_om_fp_dir := dev/src/OM-fingerprint
+src_fingerprint_programs_dir := dev/src/fingerprint-programs
 
 # location of binaries:
 bin_dir := dev/bin
@@ -43,22 +46,27 @@ src_read := $(wildcard $(src_read_dir)/*.f90)
 src_write := $(wildcard $(src_write_dir)/*.f90)
 src_transform := $(wildcard $(src_transform_dir)/*.f90)
 src_periodic := $(wildcard $(src_periodic_dir)/*.f90)
+src_om_fp := $(wildcard $(src_om_fp_dir)/*.f90)
+src_fingerprint_programs := $(wildcard $(src_fingerprint_programs_dir)/*.f90)
 
 # set location of object files:
 obj_read := $(patsubst $(src_read_dir)/%.f90, $(bin_dir)/%.o, $(src_read))
 obj_write := $(patsubst $(src_write_dir)/%.f90, $(bin_dir)/%.o, $(src_write))
 obj_transform := $(patsubst $(src_transform_dir)/%.f90, $(bin_dir)/%.o, $(src_transform))
 obj_periodic := $(patsubst $(src_periodic_dir)/%.f90, $(bin_dir)/%.o, $(src_periodic))
+obj_om_fp := $(patsubst $(src_om_fp_dir)/%.f90, $(bin_dir)/%.o, $(src_om_fp))
+obj_fingerprint_programs := $(patsubst $(src_fingerprint_programs_dir)/%.f90, $(bin_dir)/%.o, $(src_fingerprint_programs))
 
 lib_file := $(bin_dir)/$(lib_name)
 
 # set program names (all files from $(src_transform_dir) should be executable)
 programs := $(patsubst $(src_transform_dir)/%.f90, $(prog_dir)/%, $(src_transform))
+fp_programs := $(patsubst $(src_fingerprint_programs_dir)/%.f90, $(prog_dir)/%, $(src_fingerprint_programs))
 
 # set phony targets
 .PHONY: default debug clean install_bin install_lib install test doc uninstall
 
-default: $(programs) $(lib_file)
+default: $(programs) $(lib_file) $(fp_programs)
 
 doc:
 	(cd dev && ford doc.md)
@@ -69,12 +77,15 @@ debug:
 	@echo "src_write = $(src_write)"
 	@echo "src_transform = $(src_transform)"
 	@echo "src_periodic = $(src_periodic)"
+	@echo "src_om_fp = $(src_om_fp)"
+	@echo "src_fingerprint_programs = $(src_fingerprint_programs)"
 	@echo "obj_read = $(obj_read)"
 	@echo "obj_write = $(obj_write)"
 	@echo "obj_transform = $(obj_transform)"
 	@echo "obj_periodic = $(obj_periodic)"
 	@echo "lib_file = $(lib_file)"
 	@echo "programs = $(programs)"
+	@echo "fp_programs = $(fp_programs)"
 
 test: $(programs) $(lib_file)
 	${MAKE} -C dev/test/test_src_fingerprint
@@ -116,9 +127,21 @@ $(obj_transform): $(bin_dir)/%.o: $(src_transform_dir)/%.f90 | $(bin_dir)
 $(obj_periodic): $(bin_dir)/%.o: $(src_periodic_dir)/%.f90 | $(bin_dir)
 	$(fc) -c $< -o $@ $(compile_flags)
 
+# compile overlap matrix dir
+$(obj_om_fp): $(bin_dir)/%.o: $(src_om_fp_dir)/%.f90 | $(bin_dir)
+	$(fc) -c $< -o $@ $(compile_flags)
+
+# compile src_fingerprint_programs_dir
+$(obj_fingerprint_programs): $(bin_dir)/%.o: $(src_fingerprint_programs_dir)/%.f90 | $(bin_dir)
+	$(fc) -c $< -o $@ $(compile_flags)
+
 #link all transformer programs:
 $(patsubst $(src_transform_dir)/%.f90, $(prog_dir)/%, $(src_transform)): $(obj_read) $(obj_write) $(obj_periodic) $(obj_transform) | $(prog_dir)
 	$(fc) -o $@ $(bin_dir)/$(notdir $@).o $(obj_read) $(obj_write) $(obj_periodic) $(linking_flags)
+
+#link all fingerprint programs:
+$(patsubst $(src_fingerprint_programs_dir)/%.f90, $(prog_dir)/%, $(src_fingerprint_programs)): $(lib_file) $(obj_om_fp) $(obj_fingerprint_programs) | $(prog_dir)
+	$(fc) -o $@ $(bin_dir)/$(notdir $@).o $(lib_file) $(obj_om_fp) $(lapack)
 
 # create directiories
 $(bin_dir):
