@@ -3,7 +3,8 @@
 tempdir=tempdir
 mkdir -p $tempdir
 
-tester=../../executables/transform_periodic
+tester=../../executables/transform-periodic
+ls $tester
 
 tol=0.0001
 
@@ -23,7 +24,7 @@ for file in test_dat/*.ascii; do
   ./$tester $infile $vaspfile
   ./$tester $vaspfile $genfile
   ./$tester $genfile $comparefile
-  res=$(./test_src_fingerprint/fingerprint_distance $file $comparefile)
+  res=$(./../../executables/fingerprint-distance $file $comparefile)
   if python -c "exit(0 if $res < $tol else 1)"; then
     pass="passed"
   else

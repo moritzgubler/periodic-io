@@ -6,7 +6,7 @@
 
 # compiler settings
 fc := gfortran
-linking_flags = -g -fcheck=all -Wall
+linking_flags = -g -fopenmp -O2
 compile_flags = $(linking_flags)
 lapack = -llapack -lblas
 
@@ -87,13 +87,11 @@ debug:
 	@echo "programs = $(programs)"
 	@echo "fp_programs = $(fp_programs)"
 
-test: $(programs) $(lib_file)
-	${MAKE} -C dev/test/test_src_fingerprint
+test: $(programs) $(lib_file) $(fp_programs)
 	(cd dev/test && ./test_all.sh)
 
 clean:
 	rm -rf $(bin_dir) $(prog_dir)
-	$(MAKE) -C dev/test/test_src_fingerprint clean
 
 install: install_lib install_bin
 
@@ -141,7 +139,7 @@ $(patsubst $(src_transform_dir)/%.f90, $(prog_dir)/%, $(src_transform)): $(obj_r
 
 #link all fingerprint programs:
 $(patsubst $(src_fingerprint_programs_dir)/%.f90, $(prog_dir)/%, $(src_fingerprint_programs)): $(lib_file) $(obj_om_fp) $(obj_fingerprint_programs) | $(prog_dir)
-	$(fc) -o $@ $(bin_dir)/$(notdir $@).o $(lib_file) $(obj_om_fp) $(lapack)
+	$(fc) -o $@ $(bin_dir)/$(notdir $@).o $(lib_file) $(obj_om_fp) $(linking_flags) $(lapack)
 
 # create directiories
 $(bin_dir):
