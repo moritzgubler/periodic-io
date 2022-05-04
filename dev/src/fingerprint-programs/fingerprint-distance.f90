@@ -14,7 +14,9 @@ program fingerprint_distance
   !! contents of first comment line
   integer :: stat
 
-  integer, parameter :: natx_sphere=120, ns=1, np=1
+  logical :: is_periodic = .TRUE., f1periodic = .TRUE., f2periodic = .TRUE.
+  character(len=10) :: filetype
+  integer, parameter :: natx_sphere = 120, ns = 1, np = 1
   real(8) :: fp_dist
   real(8), allocatable, dimension(:,:) :: fp1, fp2
   real(8), parameter :: width_cutoff = 3.d0
@@ -28,24 +30,51 @@ program fingerprint_distance
     stop "second argument must contain output filename"
   end if
 
-  call get_nat_periodic(file1, nat1)
-  call get_nat_periodic(file2, nat2)
+  call get_file_type(file1, filetype)
+  if ( trim(filetype) == 'xyz' ) f1periodic = .FALSE.
+  call get_file_type(file2, filetype)
+  if ( trim(filetype) == 'xyz' ) f2periodic = .FALSE.
+
+  if ( f1periodic .neqv. f2periodic ) then
+    stop 'You are trying to compare a periodic file format with a non periodic one. This makes no sense.'
+  end if
+  is_periodic = f1periodic
+
+  if ( is_periodic ) then
+    call get_nat_periodic(file1, nat1)
+    call get_nat_periodic(file2, nat2)
+  else
+    call get_nat_xyz(file1, nat1)
+    call get_nat_xyz(file2, nat2)
+  end if
+
   if (nat1 /= nat2) stop 'input files contain different number of atoms'
   allocate(r1(3, nat1), r2(3,nat2), symb1(nat1), symb2(nat2))
-  call read_periodic(trim(file1), nat1, r1, lat1, symb1, comment)
-  call read_periodic(trim(file2), nat2, r2, lat2, symb2, comment)
+  if ( is_periodic ) then
+    call read_periodic(trim(file1), nat1, r1, lat1, symb1, comment)
+    call read_periodic(trim(file2), nat2, r2, lat2, symb2, comment)
+  else
+    call read_xyz(file1, nat1, r1, symb1, comment)
+    call read_xyz(file2, nat2, r2, symb2, comment)
+    lat1 = 0.d0
+    lat2 = 0.d0
+  end if
+
 
   allocate(fp1((ns + 3*np)*natx_sphere, nat1), fp2((ns + 3*np)*natx_sphere, nat2))
 
-  call back2cell(nat1, r1, lat1)
+  if ( is_periodic ) then
+    call back2cell(nat1, r1, lat1)
+  end if
   call fingerprint(nat1, natx_sphere, ns, np, width_cutoff, lat1, r1, symb1, fp1)
 
-  call back2cell(nat2, r2, lat2)
+  if ( is_periodic ) then
+    call back2cell(nat2, r2, lat2)
+  end if
   call fingerprint(nat2, natx_sphere, ns, np, width_cutoff, lat2, r2, symb2, fp2)
 
   call calc_fpd(nat1, natx_sphere, ns, np, fp1, fp2, fp_dist)
 
   print*, fp_dist
-
 
 end program fingerprint_distance

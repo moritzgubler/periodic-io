@@ -66,6 +66,8 @@ subroutine get_words(string, nwords, len_string, words, len_words)
 end subroutine get_words
 
 subroutine get_file_type(filename, filetype)
+  !! returns the filetype of file with filename.
+  !! example: test.txt -> txt; test.dat -> dat
   implicit none
   character(len=*), intent(in) :: filename
   character(len=*), intent(out) :: filetype
