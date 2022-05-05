@@ -130,7 +130,7 @@
 
     DO ienv=1, nenv
 
-      IF (volume.lt.0.d0 ) THEN ! no periodic boundary condition
+      IF (volume.lt.1.d-3 ) THEN ! no periodic boundary condition
           ixyzmax=0
       ELSE  ! periodic boundary conditions
         DO i=1,3
@@ -584,7 +584,10 @@
     lwork=100*n
     ALLOCATE(work(lwork))
     CALL dsyev('v','l', n, aa, n, eval, work, lwork, info)
-    IF(info/=0) STOP ' ERROR in dsyev'
+    IF(info/=0) then
+      print*, 'here'
+      STOP ' ERROR in dsyev'
+    end if
     DEALLOCATE(work)
 
   end subroutine diagonalizeMatrix

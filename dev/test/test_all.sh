@@ -31,3 +31,5 @@ for file in test_dat/*.ascii; do
   fi
   echo "Test: $basefile read_ascii, write_cif, read_cif, write_in, read_in, write_gen, read_gen, write_ascii -> $pass with fp_distance: $res"
 done
+
+./../../executables/fingerprint-distance test_free_boundary_conditions/CS2H12-1.xyz test_free_boundary_conditions/CS2H12-2.xyz
