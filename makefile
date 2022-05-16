@@ -8,7 +8,7 @@
 fc := gfortran
 linking_flags = -g -fopenmp -O2
 compile_flags = $(linking_flags)
-lapack = -llapack -lblas
+lapack = -llapack -lopenblas
 
 # Name of library file
 lib_name := libperiodicIO.a
@@ -83,23 +83,25 @@ debug:
 	@echo "obj_write = $(obj_write)"
 	@echo "obj_transform = $(obj_transform)"
 	@echo "obj_periodic = $(obj_periodic)"
+	@echo "obj_om_fp = $(obj_om_fp)"
+	@echo "obj_fingerprint_programs = $(obj_fingerprint_programs)"
 	@echo "lib_file = $(lib_file)"
 	@echo "programs = $(programs)"
 	@echo "fp_programs = $(fp_programs)"
 
-test: $(programs) $(lib_file) $(fp_programs)
+test: default
 	(cd dev/test && ./test_all.sh)
 
 clean:
 	rm -rf $(bin_dir) $(prog_dir)
 
-install: install_lib install_bin
+install: install_lib install_bin default
 
 uninstall:
 	rm -f $(install_lib_dir)/$(lib_name)
 	rm -f $(patsubst $(prog_dir)/%, $(install_exec_dir)/%, $(programs))
 
-install_bin: $(programs) | $(install_exec_dir)
+install_bin: | $(install_exec_dir)
 	cp $(prog_dir)/* $(install_exec_dir)/.
 
 install_lib: $(lib_file) | $(install_lib_dir)

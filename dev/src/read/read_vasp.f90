@@ -150,4 +150,5 @@ subroutine get_nat_vasp(filename, nat)
   if(ios /=0) stop 'error reading typecount getnatvasp moleculario'
 
   nat = sum(typecount)
+  close(io)
 end subroutine get_nat_vasp
