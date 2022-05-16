@@ -78,16 +78,16 @@ test: default
 clean:
 	rm -rf $(bin_dir) $(prog_dir)
 
-install: install_lib install_bin default
+install: install_lib install_bin
 
 uninstall:
 	rm -f $(install_lib_dir)/$(lib_name)
 	rm -f $(patsubst $(prog_dir)/%, $(install_exec_dir)/%, $(programs))
 
-install_bin: | $(install_exec_dir)
+install_bin: default | $(install_exec_dir)
 	cp $(prog_dir)/* $(install_exec_dir)/.
 
-install_lib: $(lib_file) | $(install_lib_dir)
+install_lib: default $(lib_file) | $(install_lib_dir)
 	cp $(lib_file) $(install_lib_dir)/.
 
 #create library:
