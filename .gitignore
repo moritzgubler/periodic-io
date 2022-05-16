@@ -39,3 +39,4 @@ dev/doc/
 *.save
 *.xml
 *.in
+make.inc
