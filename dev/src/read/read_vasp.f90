@@ -27,7 +27,9 @@ subroutine read_vasp(filename, nat, rxyz, alat, atomnames, comment)
   ! open file
   open (newunit=io, file=trim(adjustl(filename)), iostat=ios, status='old')
   if (ios /= 0) then
-    print *, "Error opening file"//trim(filename)
+    print*, 'io', io
+    print*, 'ios', ios
+    print *, "Error opening file "//trim(filename)
     stop "Error opening file"
   end if
 
