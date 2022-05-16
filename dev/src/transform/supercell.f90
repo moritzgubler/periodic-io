@@ -56,8 +56,7 @@ program transform_periodic
     do j = 0, dims(2) - 1 , 1
       do k = 0, dims(3) - 1 , 1
         do iat = 1, nat, 1
-          rsuper(:,scounter*nat + iat) = rxyz(:, iat) + i * alat(:, 1) &
-            + j * alat(:, 2) + k * alat(:, 3)
+          rsuper(:,scounter*nat + iat) = rxyz(:, iat) + i*alat(:, 1) + j*alat(:, 2) + k*alat(:, 3)
         end do
         atoms_super(scounter*nat + 1 : (scounter + 1)*nat) = atomnames
         scounter = scounter + 1
