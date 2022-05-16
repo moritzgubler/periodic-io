@@ -87,7 +87,7 @@ uninstall:
 install_bin: default | $(install_exec_dir)
 	cp $(prog_dir)/* $(install_exec_dir)/.
 
-install_lib: default $(lib_file) | $(install_lib_dir)
+install_lib: $(lib_file) | $(install_lib_dir)
 	cp $(lib_file) $(install_lib_dir)/.
 
 #create library:
