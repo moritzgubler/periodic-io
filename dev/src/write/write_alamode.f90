@@ -69,7 +69,7 @@ subroutine write_alamode(filename, nat, rxyz, alat, atomnames, comment)
     do j = 1, ntypes, 1
       if ( atomnames(i) == atom_types(j) ) exit
     end do
-    write(io, *), j, xyzred(1, i), xyzred(2, i), xyzred(3, i)
+    write(io, *) j, xyzred(1, i), xyzred(2, i), xyzred(3, i)
   end do
 
   write(io, '(a)') '/'
