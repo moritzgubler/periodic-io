@@ -65,11 +65,13 @@ subroutine write_alamode(filename, nat, rxyz, alat, atomnames, comment)
   write(io, '(a)') '/'
 
   ! write positions
+  write(io, '(a)') '&position'
   do i = 1, nat, 1
     do j = 1, ntypes, 1
       if ( atomnames(i) == atom_types(j) ) exit
     end do
-    write(io, *) j, xyzred(1, i), xyzred(2, i), xyzred(3, i)
+    write(io, '(2x, i5, 3(1x, f20.15))', iostat=ios) j, xyzred(1, i), xyzred(2, i), xyzred(3, i)
+    if (ios /= 0) stop 'error writing alamode positions'
   end do
 
   write(io, '(a)') '/'
