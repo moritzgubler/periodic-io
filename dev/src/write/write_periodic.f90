@@ -41,6 +41,8 @@ subroutine write_periodic(filename, nat, rxyz, alat, atomnames, comment)
     call write_quantum_espresso(filename, nat, rxyz, alat, atomnames)
   case('vasp')
     call write_vasp(filename, nat, rxyz, alat, atomnames, comment)
+  case('alm')
+    call write_alamode(filename, nat, rxyz, alat, atomnames, comment)
   case default
     print*, "filetype,", filetype
     print*, "filename, ", trim(filename)
