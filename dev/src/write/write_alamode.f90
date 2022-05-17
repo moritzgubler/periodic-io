@@ -50,17 +50,22 @@ subroutine write_alamode(filename, nat, rxyz, alat, atomnames, comment)
 
   ! write general tag
   write(io, '(a)') '&general'
-  write(io, '(a, i5)') '  NAT = ', nat
-  write(io, '(a, i5)') '  NKD = ', ntypes
-  write(fstring, '(a, i5.5, a)') '(a,', ntypes,'a )'
-  write(io, fstring) '  KD = ', ( atom_types(i)//' ', i=1,ntypes )
+  write(io, '(a, i5)', iostat=ios) '  NAT = ', nat
+  if (ios /= 0) stop 'error writing nat '
+  write(io, '(a, i5)', iostat=ios) '  NKD = ', ntypes
+  if(ios /= 0) stop 'error writing ntypes alamode'
+  write(fstring, '(a, i5.5, a)', iostat=ios) '(a,', ntypes,'a )'
+  if( ios /= 0) stop 'error in internal write ntypes alamode'
+  write(io, fstring, iostat=ios) '  KD = ', ( atom_types(i)//' ', i=1,ntypes )
+  if (ios /=0) stop 'error writing atomtypes in alamode'
   write(io, '(a)') '/'
 
   ! write atomic positions
   write(io, '(a)') '&cell'
   write(io, '(a)') '  1.0'
   do i = 1, 3, 1
-    write(io, *) alat(i, 1), alat(i, 2), alat(i, 3)
+    write(io, *, iostat=ios) alat(i, 1), alat(i, 2), alat(i, 3)
+    if (ios /=0) stop 'error writing lattice vectors in alamode'
   end do
   write(io, '(a)') '/'
 
