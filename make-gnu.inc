@@ -6,7 +6,7 @@
 
 # compiler settings
 fc := gfortran
-linking_flags = -g -fopenmp -O2
+linking_flags = -g -fopenmp -O2 -static-libgfortran
 compile_flags = $(linking_flags)
 lapack = -llapack -lopenblas
 
