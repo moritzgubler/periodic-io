@@ -7,7 +7,7 @@
 # compiler settings
 fc := gfortran
 linking_flags = -g -fopenmp -O2 -static-libgfortran
-compile_flags = $(linking_flags)
+compile_flags = -c $(linking_flags)
 lapack = -llapack -lopenblas
 
 # Name of library file

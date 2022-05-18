@@ -7,7 +7,7 @@
 # compiler settings
 fc := ftn
 linking_flags = -g -fopenmp
-compile_flags = $(linking_flags)
+compile_flags = -c $(linking_flags)
 lapack =
 
 # Name of library file

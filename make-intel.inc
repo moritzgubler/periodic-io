@@ -7,7 +7,7 @@
 # compiler settings
 fc := ifort
 linking_flags = -g -qopenmp -O2 -no-wrap-margin
-compile_flags = $(linking_flags)
+compile_flags = -c $(linking_flags)
 lapack = -mkl
 
 # Name of library file

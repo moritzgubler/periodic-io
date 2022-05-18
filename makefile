@@ -7,7 +7,7 @@ endif
 
 ################################################################################
 # Don't change anything below this line unless you know what you are doing.
-# You should be able to adjust enough by tweaking the paths above.
+# You should be able to adjust enough by tweaking the make.inc files.
 ################################################################################
 
 # path definitions
@@ -83,6 +83,7 @@ install: install_lib install_bin
 uninstall:
 	rm -f $(install_lib_dir)/$(lib_name)
 	rm -f $(patsubst $(prog_dir)/%, $(install_exec_dir)/%, $(programs))
+	rm -f $(patsubst $(prog_dir)/%, $(install_exec_dir)/%, $(fp_programs))
 
 install_bin: default | $(install_exec_dir)
 	cp $(prog_dir)/* $(install_exec_dir)/.
@@ -96,27 +97,27 @@ $(lib_file): $(obj_periodic) $(obj_read) $(obj_write)
 
 # compile src_read_dir
 $(obj_read): $(bin_dir)/%.o: $(src_read_dir)/%.f90 | $(bin_dir)
-	$(fc) -c $< -o $@ $(compile_flags)
+	$(fc) $< -o $@ $(compile_flags)
 
 # compile src_write_dir
 $(obj_write): $(bin_dir)/%.o: $(src_write_dir)/%.f90 | $(bin_dir)
-	$(fc) -c $< -o $@ $(compile_flags)
+	$(fc) $< -o $@ $(compile_flags)
 
 # compile src_transform_dir
 $(obj_transform): $(bin_dir)/%.o: $(src_transform_dir)/%.f90 | $(bin_dir)
-	$(fc) -c $< -o $@ $(compile_flags)
+	$(fc) $< -o $@ $(compile_flags)
 
 # compile src_periodic_dir
 $(obj_periodic): $(bin_dir)/%.o: $(src_periodic_dir)/%.f90 | $(bin_dir)
-	$(fc) -c $< -o $@ $(compile_flags)
+	$(fc) $< -o $@ $(compile_flags)
 
 # compile overlap matrix dir
 $(obj_om_fp): $(bin_dir)/%.o: $(src_om_fp_dir)/%.f90 | $(bin_dir)
-	$(fc) -c $< -o $@ $(compile_flags)
+	$(fc) $< -o $@ $(compile_flags)
 
 # compile src_fingerprint_programs_dir
 $(obj_fingerprint_programs): $(bin_dir)/%.o: $(src_fingerprint_programs_dir)/%.f90 | $(bin_dir)
-	$(fc) -c $< -o $@ $(compile_flags)
+	$(fc) $< -o $@ $(compile_flags)
 
 #link all transformer programs:
 $(patsubst $(src_transform_dir)/%.f90, $(prog_dir)/%, $(src_transform)): $(obj_read) $(obj_write) $(obj_periodic) $(obj_transform) | $(prog_dir)
