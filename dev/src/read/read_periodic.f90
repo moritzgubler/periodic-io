@@ -44,7 +44,7 @@ subroutine read_periodic(filename, nat, rxyz, alat, atomnames, comment)
   case('vasp')
     call read_vasp(filename, nat, rxyz, alat, atomnames, comment)
   case default
-    print*, "filetype,", filetype
+    print*, "filetype, ", filetype
     stop "unknown filetype read_periodic"
   end select
 
@@ -76,6 +76,8 @@ subroutine get_nat_periodic(filename, nat)
     call get_nat_cif(filename, nat)
   case("in")
     call get_nat_in(filename, nat)
+  case('qe')
+    call get_nat_quantum_espresso(filename, nat)
   case("gen")
     call get_nat_dftb(filename, nat)
   case("vasp")

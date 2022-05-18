@@ -85,7 +85,9 @@ subroutine read_quantum_espresso(filename, nat, rxyz, alat, atomnames)
         posread = .TRUE.
       end if
   end do floop
-  if ( .not. ibravset ) stop "ibrav not set"
+  if ( .not. ibravset ) then
+    print*, 'ibrav not set in quantum espresso file. Proceed with care.'
+  end if
   if ( .not. latread ) stop "lattice vectors not set"
   if ( .not. posread ) stop "positions not red"
   close(io)
