@@ -22,13 +22,9 @@ program fingerprint_distance
   real(8), parameter :: width_cutoff = 3.d0
 
   call get_command_argument(1,file1, status=stat)
-  if ( stat/= 0 ) then
-    stop "first argument must contain input filename"
-  end if
+  if ( stat/= 0 ) call help
   call get_command_argument(2,file2, status=stat)
-  if ( stat /= 0 ) then
-    stop "second argument must contain output filename"
-  end if
+  if ( stat /= 0 ) call help
 
   call get_file_type(file1, filetype)
   if ( trim(filetype) == 'xyz' ) f1periodic = .FALSE.
@@ -36,7 +32,9 @@ program fingerprint_distance
   if ( trim(filetype) == 'xyz' ) f2periodic = .FALSE.
 
   if ( f1periodic .neqv. f2periodic ) then
-    stop 'You are trying to compare a periodic file format with a non periodic one. This makes no sense.'
+    print*, 'You are trying to compare a periodic file format with a non periodic one. This makes no sense.'
+    print*, ''
+    call help
   end if
   is_periodic = f1periodic
 
@@ -48,7 +46,11 @@ program fingerprint_distance
     call get_nat_xyz(file2, nat2)
   end if
 
-  if (nat1 /= nat2) stop 'input files contain different number of atoms'
+  if (nat1 /= nat2) then
+    print*, 'input files contain different number of atoms'
+    print*, ''
+    call help
+  end if
   allocate(r1(3, nat1), r2(3,nat2), symb1(nat1), symb2(nat2))
   if ( is_periodic ) then
     call read_periodic(trim(file1), nat1, r1, lat1, symb1, comment)
@@ -77,4 +79,17 @@ program fingerprint_distance
 
   print*, fp_dist
 
+contains
+  subroutine help
+    implicit none
+    print*, ''
+    print*, 'This is the fingerprint-distance program of the periodicIO library.&
+    & It calculates the fingerprint distance structure of two structures with &
+    & both periodic and free boundary conditions. It can read and compare all the&
+    & file formats supported by the periodicIO library.'
+    print*, ''
+    print*, 'Usage: fingerprint-distance file1 fil2'
+    print*, ''
+    stop
+  end subroutine help
 end program fingerprint_distance

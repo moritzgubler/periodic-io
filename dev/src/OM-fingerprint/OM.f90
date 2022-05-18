@@ -290,7 +290,7 @@
     radius_cutoff=sqrt(2.d0*nex_cutoff)*width_cutoff
     radius_cutoff2=radius_cutoff**2
     factor_cutoff=1.d0/(2.d0*nex_cutoff*width_cutoff**2)
-  !!  write(*,*) 'width_cutoff,radius_cutoff',width_cutoff,radius_cutoff
+    !!  write(*,*) 'width_cutoff,radius_cutoff',width_cutoff,radius_cutoff
        nat_sphere=0
        DO jat = 1, nat
            DO ix = -ixyzmax,ixyzmax
@@ -778,7 +778,7 @@
        !     case('Am')
        !     case('Cm')
     CASE DEFAULT
-       PRINT*, " Not recognized atomic type "//sym ; STOP
+       PRINT*, " Not recognized atomic type: ",sym ; STOP
     ENDSELECT
 
     rcov = rcov /  0.52917720859d0   ! convert to atomic units
