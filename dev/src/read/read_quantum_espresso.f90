@@ -55,7 +55,7 @@ subroutine read_quantum_espresso(filename, nat, rxyz, alat, atomnames)
           stop "unknown units"
         end if
         do i = 1, 3, 1
-          read(io, *, iostat = ios) alat(i, 1), alat(i, 2), alat(i, 3)
+          read(io, *, iostat = ios) alat(1, i), alat(2, i), alat(3, i)
           if ( ios /= 0 ) then
             stop "error reading lattice vectors"
           end if
