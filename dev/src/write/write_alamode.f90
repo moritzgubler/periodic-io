@@ -66,7 +66,7 @@ subroutine write_alamode(filename, nat, rxyz, alat, atomnames, comment)
   write(io, '(a)') '&cell'
   write(io, '(a)') '  1.0'
   do i = 1, 3, 1
-    write(io, *, iostat=ios) alat(i, 1), alat(i, 2), alat(i, 3)
+    write(io, *, iostat=ios) alat(1, i), alat(2, i), alat(3, i)
     if (ios /=0) stop 'error writing lattice vectors in alamode'
   end do
   write(io, '(a)') '/'
