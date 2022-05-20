@@ -1,5 +1,6 @@
 subroutine write_alamode(filename, nat, rxyz, alat, atomnames, comment)
-  !! writes a periodic structure to a . in file
+  !! writes a periodic structure to a .alm file.
+  !!IMPORTANT:  puts atoms back into cell.
   implicit none
   character(len=*) :: filename
   !! output file
@@ -45,6 +46,7 @@ subroutine write_alamode(filename, nat, rxyz, alat, atomnames, comment)
   end do
 
   call cart2frac(nat, alat, rxyz, xyzred)
+  xyzred = modulo(xyzred, 1.d0)
   open(newunit=io,file=filename,iostat=ios)
   if(ios /= 0) stop "error opening output file"
 
