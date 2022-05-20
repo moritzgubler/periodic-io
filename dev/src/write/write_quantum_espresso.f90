@@ -27,7 +27,7 @@ subroutine write_quantum_espresso(filename, nat, rxyz, alat, atomnames)
 
   write(io, *) "CELL_PARAMETERS bohr"
   do i = 1, 3, 1
-    write(io,*) alat(:, i)
+    write(io,*) alat(1, i), alat(2, i), alat(3, i)
   end do
 
   write(io,*) "ATOMIC_POSITIONS bohr"
