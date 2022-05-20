@@ -47,7 +47,7 @@ subroutine write_alamode(filename, nat, rxyz, alat, atomnames, comment)
 
   call cart2frac(nat, alat, rxyz, xyzred)
   xyzred = modulo(xyzred, 1.d0)
-  open(newunit=io,file=filename,iostat=ios)
+  open(newunit=io, file=filename, iostat=ios, position='rewind')
   if(ios /= 0) stop "error opening output file"
 
   ! write general tag
