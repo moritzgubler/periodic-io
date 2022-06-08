@@ -1,4 +1,4 @@
-program transform_periodic
+program reshape_cell
   !! this program reads a periodic structure, tries to correct its shape
   !! and writes it to the filename given in the second filename
   implicit none
@@ -29,4 +29,4 @@ program transform_periodic
   call reshapecell(nat, alat, rxyz)
 
   call write_periodic(trim(file_out), nat, rxyz, alat, atomnames , comment)
-end program transform_periodic
+end program reshape_cell
