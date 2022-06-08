@@ -12,9 +12,11 @@ subroutine reshapecell(nat, alat0, rxyz)
   !! lattice vectors
   real*8, dimension(3, 3) :: alatmin
   real*8 :: area, area1, area2, area3, areamin
-  integer :: i, i12, i13, i21, i23, i31, i32, j
+  integer :: i, i12, i13, i21, i23, i31, i32, j, imax
   real*8 :: vol, vol0
   logical :: alatminset = .FALSE.
+
+  imax = 4
 
   vol0 = abs(alat0(1, 1)*alat0(2, 2)*alat0(3, 3) - alat0(1, 1)*alat0(2, 3)*alat0(3, 2) - &
              alat0(1, 2)*alat0(2, 1)*alat0(3, 3) + alat0(1, 2)*alat0(2, 3)*alat0(3, 1) + &
@@ -22,18 +24,18 @@ subroutine reshapecell(nat, alat0, rxyz)
 
   areamin = 1.d100
 
-  do i13 = -1, 1
-    do i12 = -1, 1
+  do i13 = -imax, imax
+    do i12 = -imax, imax
       alat(1, 1) = alat0(1, 1) + i12*alat0(1, 2) + i13*alat0(1, 3)
       alat(2, 1) = alat0(2, 1) + i12*alat0(2, 2) + i13*alat0(2, 3)
       alat(3, 1) = alat0(3, 1) + i12*alat0(3, 2) + i13*alat0(3, 3)
-      do i21 = -1, 1
-        do i23 = -1, 1
+      do i21 = -imax, imax
+        do i23 = -imax, imax
           alat(1, 2) = alat0(1, 2) + i21*alat0(1, 1) + i23*alat0(1, 3)
           alat(2, 2) = alat0(2, 2) + i21*alat0(2, 1) + i23*alat0(2, 3)
           alat(3, 2) = alat0(3, 2) + i21*alat0(3, 1) + i23*alat0(3, 3)
-          do i31 = -1, 1
-            do i32 = -1, 1
+          do i31 = -imax, imax
+            do i32 = -imax, imax
               alat(1, 3) = alat0(1, 3) + i31*alat0(1, 1) + i32*alat0(1, 2)
               alat(2, 3) = alat0(2, 3) + i31*alat0(2, 1) + i32*alat0(2, 2)
               alat(3, 3) = alat0(3, 3) + i31*alat0(3, 1) + i32*alat0(3, 2)
