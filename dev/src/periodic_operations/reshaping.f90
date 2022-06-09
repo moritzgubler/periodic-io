@@ -16,7 +16,7 @@ subroutine reshapecell(nat, alat0, rxyz)
   real*8 :: vol, vol0
   logical :: alatminset = .FALSE.
 
-  imax = 4
+  imax = 6
 
   vol0 = abs(alat0(1, 1)*alat0(2, 2)*alat0(3, 3) - alat0(1, 1)*alat0(2, 3)*alat0(3, 2) - &
              alat0(1, 2)*alat0(2, 1)*alat0(3, 3) + alat0(1, 2)*alat0(2, 3)*alat0(3, 1) + &
