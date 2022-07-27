@@ -1,5 +1,5 @@
 program periodic2qe
-  !! reads a periodic file and converts it to the .qe format
+  !! reads a periodic file and converts it to the qe format
   implicit none
   integer :: nat
   real*8, allocatable, dimension(:,:) :: rxyz
@@ -21,8 +21,8 @@ program periodic2qe
   if ( len_trim(file_out) == 0 ) then
     stop "second argument must contain output filename"
   end if
-  call get_nat_quantum_espresso(file_in, nat)
+  call get_nat_periodic(file_in, nat)
   allocate(rxyz(3,nat), atomnames(nat))
-  call read_quantum_espresso(trim(file_in), nat, rxyz, alat, atomnames, comment)
-  call write_periodic(trim(file_out), nat, rxyz, alat, atomnames , comment)
+  call read_periodic(trim(file_in), nat, rxyz, alat, atomnames, comment)
+  call write_quantum_espresso(trim(file_out), nat, rxyz, alat, atomnames , comment)
 end program periodic2qe
