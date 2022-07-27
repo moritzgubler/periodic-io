@@ -106,10 +106,8 @@ subroutine set_nat_qe(fname, nat)
   
   open(file=fname, newunit=io, iostat=stat)
   
-  i = 1
-  do
+  do i = 1, nlines
     write(io, '(a300)') all_file(i)
-    i = i + 1
   end do
   close(io)
   
