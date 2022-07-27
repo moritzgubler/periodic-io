@@ -72,7 +72,7 @@ end subroutine write_quantum_espresso
 subroutine set_nat_qe(fname, nat)
 
   implicit none
-  character(len=300), intent(in) :: fname
+  character(len=*), intent(in) :: fname
   integer, intent(in) :: nat
   integer :: i, stat, io, nlines
   character(len=300) :: all_line
