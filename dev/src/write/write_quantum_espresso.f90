@@ -21,10 +21,7 @@ subroutine write_quantum_espresso(filename, nat, rxyz, alat, atomnames)
   integer :: i
 
   call get_atom_types
-  
-  print*, filename
-  stop
-  
+
   call set_nat_qe(filename, nat)
 
   open(file=filename, newunit=io, iostat=ios, position="append")

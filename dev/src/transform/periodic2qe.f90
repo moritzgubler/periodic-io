@@ -24,5 +24,5 @@ program periodic2qe
   call get_nat_periodic(file_in, nat)
   allocate(rxyz(3,nat), atomnames(nat))
   call read_periodic(trim(file_in), nat, rxyz, alat, atomnames, comment)
-  call write_quantum_espresso(file_out, nat, rxyz, alat, atomnames , comment)
+  call write_quantum_espresso(trim(file_out), nat, rxyz, alat, atomnames)
 end program periodic2qe
