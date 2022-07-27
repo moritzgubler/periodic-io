@@ -21,9 +21,11 @@ subroutine write_quantum_espresso(filename, nat, rxyz, alat, atomnames)
   integer :: i
 
   call get_atom_types
+  
+  call set_nat_qe(filename, nat)
 
   open(file=filename, newunit=io, iostat=ios, position="append")
-  if (ios /= 0) stop "error reading file in write_quantum_espresso (libmoleulario)"
+  if (ios /= 0) stop "error reading file in write_quantum_espresso (libmoleculario)"
 
   write(io, *) "CELL_PARAMETERS bohr"
   do i = 1, 3, 1
@@ -66,3 +68,69 @@ contains
     end do
   end subroutine get_atom_types
 end subroutine write_quantum_espresso
+
+subroutine set_nat_qe(fname, nat)
+
+  implicit none
+  character(len=300), intent(in) :: fname
+  integer, intent(in) :: nat
+  integer :: i, stat, io, nlines
+  character(len=300) :: all_line
+  character(len=300), dimension(:), allocatable :: all_file
+  logical :: nat_found
+  
+  nat_found = .FALSE.
+  
+  nlines = count_lines(fname)
+  allocate(all_file(nlines))
+  
+  open(file=fname, newunit=io, iostat=stat)
+  if ( stat /= 0 ) then
+    stop 'error opening input file'
+  end if
+  
+  i = 0
+  do
+    read(io, '(a300)', iostat =stat) all_line
+    if ( stat /=0 ) exit
+    i = i + 1
+    all_file(i) = all_line
+    call lower_case(all_line)
+    if ( index(all_line, 'nat') > 0 ) then
+      nat_found = .TRUE.
+      write(all_file(i), '(a, i5)') 'nat = ', nat
+    end if
+  end do
+  
+  close(io)
+  
+  open(file=fname, newunit=io, iostat=stat)
+  
+  i = 1
+  do
+    write(io, '(a300)') all_file(i)
+    i = i + 1
+  end do
+  close(io)
+  
+contains
+  
+  function count_lines(filename) result(nlinesp)
+    implicit none
+    character(len=*) :: filename
+    integer :: nlinesp, ipers, iop
+    open(newunit=ipers,file=filename, status="old", iostat=iop)
+    if (iop /= 0 ) then
+      print*, trim(filename)
+      stop "error opening file in countlines, keysystm"
+    end if
+    nlinesp = 0
+    do
+    read(ipers,*,iostat=iop)
+    if (iop/=0) exit
+    nlinesp = nlinesp + 1
+    end do
+    close(ipers)
+  end function count_lines
+
+end subroutine set_nat_qe
