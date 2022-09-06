@@ -29,9 +29,7 @@ subroutine reshapecell(nat, alat0, rxyz)
   alat0 = matmul(alat0, p)
   call alat2ascii(nat, rxyz, alat0)
   call reshape_ascii(alat0, imax, success)
-  if ( success ) then
-    alat0 = matmul(alat0, pinv)
-  end if
+  alat0 = matmul(alat0, pinv)
   call back2cell(nat, rxyz, alat0)
 
   ! search in second permuation of lattice vectors:
@@ -47,9 +45,9 @@ subroutine reshapecell(nat, alat0, rxyz)
   alat0 = matmul(alat0, p)
   call alat2ascii(nat, pos_temp, alat0)
   call reshape_ascii(alat0, imax, success)
+  alat0 = matmul(alat0, pinv)
   if ( success ) then
     rxyz = pos_temp
-    alat0 = matmul(alat0, pinv)
     call back2cell(nat, rxyz, alat0)
   end if
 
