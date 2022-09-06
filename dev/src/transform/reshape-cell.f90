@@ -29,4 +29,9 @@ program reshape_cell
   call reshapecell(nat, alat, rxyz)
 
   call write_periodic(trim(file_out), nat, rxyz, alat, atomnames , comment)
+  
+  call read_periodic(trim(file_in), nat, rxyz, alat, atomnames, comment)
+  call reshapecell_slow(nat, alat, rxyz)
+  file_out = 'slow.ascii'
+  call write_periodic(trim(file_out), nat, rxyz, alat, atomnames , comment)
 end program reshape_cell
