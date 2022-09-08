@@ -11,11 +11,12 @@ subroutine reshapecell(nat, alat0, rxyz)
   integer :: imax
   logical :: success
 
-  call alat2ascii(nat, rxyz, alat0)
+  call propject_alat(nat, rxyz, alat0)
   imax = 6
 
   ! try reshaping in original upper triangular lattice matrix
-  call reshape_ascii(alat0, imax, success)
+  ! project a to x axis, b, xy plane and c to xyz
+  call reshape_upper_triangular(alat0, imax, success)
 
   ! search in first permutation of lattice vectors:
   ! 1 -> 3
@@ -27,8 +28,10 @@ subroutine reshapecell(nat, alat0, rxyz)
   p(3, 1) = 1.d0
   call matinv3(p, pinv)
   alat0 = matmul(alat0, p)
-  call alat2ascii(nat, rxyz, alat0)
-  call reshape_ascii(alat0, imax, success)
+  ! the permutation has the following effect:
+  ! b is projected to x axis, c to xy plane and a to xyz
+  call propject_alat(nat, rxyz, alat0)
+  call reshape_upper_triangular(alat0, imax, success)
   alat0 = matmul(alat0, pinv)
   call back2cell(nat, rxyz, alat0)
 
@@ -43,8 +46,10 @@ subroutine reshapecell(nat, alat0, rxyz)
   p(3, 2) = 1.d0
   call matinv3(p, pinv)
   alat0 = matmul(alat0, p)
-  call alat2ascii(nat, pos_temp, alat0)
-  call reshape_ascii(alat0, imax, success)
+  ! the permutation has the following effect:
+  ! c is projected to x axis, a to xy plane and b to xyz
+  call propject_alat(nat, pos_temp, alat0)
+  call reshape_upper_triangular(alat0, imax, success)
   alat0 = matmul(alat0, pinv)
   if ( success ) then
     rxyz = pos_temp
@@ -53,8 +58,9 @@ subroutine reshapecell(nat, alat0, rxyz)
 
 contains
 
-  subroutine alat2ascii(nat1, rxyz1, alat_io)
-    !! Converts the lattice vectors in ascii format.
+  subroutine propject_alat(nat1, rxyz1, alat_io)
+    !! projects first lattice vector on x axis, 2nd lattice vector on xy plane
+    !! and third lattice vector remaining xyz space.
    implicit none
    integer, intent(in) :: nat1
    !! Number of atoms
@@ -85,7 +91,7 @@ contains
    end do
    alat_io = alat1
    !call back2cell(nat1, rxyz1, alat1)
-  end subroutine alat2ascii
+  end subroutine propject_alat
   
   subroutine matinv3(A, B)
     !! Performs a direct calculation of the inverse of a 3×3 matrix.
@@ -115,7 +121,10 @@ contains
 
 end subroutine reshapecell
 
-subroutine reshape_ascii(alat0, imax, new_lattice_found)
+subroutine reshape_upper_triangular(alat0, imax, new_lattice_found)
+  !! tries to find a better cell shape while keeping the lattice matrix in upper
+  !! triangular form. That way only linear combinations of lattice vectors 
+  !! can be tried that leave the volume invariant.
   implicit none
   real(8), intent(inout) :: alat0(3, 3)
   integer, intent(in) :: imax
@@ -166,4 +175,4 @@ contains
     area_in = sqrt(c(1)**2 + c(2)**2 + c(3)**2)
   end subroutine cellsurface
 
-end subroutine reshape_ascii
+end subroutine reshape_upper_triangular
