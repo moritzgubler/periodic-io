@@ -20,6 +20,13 @@ subroutine read_ascii(filename, nat, rxyz, alat, atomnames, comment)
   real*8 :: alat_temp(2, 3)
   real*8 :: Bohr_Ang = 0.52917721067
   !! Bohr to angstrom conversion factor.
+  logical :: is_reduced
+  logical :: is_in_bohr
+  character(len=250):: key_string
+  real(8) :: xyzred(3, nat)
+
+  is_reduced = .false.
+  is_in_bohr = .false.
 
   open (newunit=io, file=trim(adjustl(filename)), iostat=ios, status="old")
   if (ios /= 0) then
@@ -38,6 +45,7 @@ subroutine read_ascii(filename, nat, rxyz, alat, atomnames, comment)
     if (ios /= 0) stop "error reading lattice in moleculario"
     all_line = adjustl(all_line)
     if ( len_trim(all_line) == 0 ) cycle
+    call parse_keyword
     if ( index(all_line, "#") == 1 ) cycle
     read(all_line, *, iostat=ios) alat_temp(i,:)
     if (ios /= 0) stop "error parsing lattice in moleculario"
@@ -59,6 +67,7 @@ subroutine read_ascii(filename, nat, rxyz, alat, atomnames, comment)
       stop "error reading line in read_ascii"
     end if
     if ( len_trim(all_line) == 0 ) cycle
+    call parse_keyword
     if ( index(all_line, "#") == 1 ) cycle
     read (all_line, *, iostat=ios) rxyz(1, i), rxyz(2, i), rxyz(3, i), atomnames(i)
     if ( ios/= 0 ) then
@@ -68,8 +77,29 @@ subroutine read_ascii(filename, nat, rxyz, alat, atomnames, comment)
     i = i + 1
   end do
   close (io)
-  alat = alat/Bohr_Ang
-  rxyz = rxyz/Bohr_Ang
+
+  if ( is_reduced ) then
+    xyzred = rxyz
+    if ( is_in_bohr ) then
+      call frac2cart(nat, alat, xyzred, rxyz)
+    else
+      alat = alat / Bohr_Ang
+      call frac2cart(nat, alat, xyzred, rxyz)
+    end if
+  elseif (.not. is_in_bohr) then
+    alat = alat / Bohr_Ang
+    rxyz = rxyz / Bohr_Ang
+  end if
+
+  contains
+  subroutine parse_keyword()
+    if ( index(all_line, '#keyword:') == 1 ) then ! keyword line found
+      key_string = all_line(11:)
+      if ( trim(key_string) == 'reduced' ) is_reduced = .true.
+      if ( trim(key_string) ==  'bohr' ) is_in_bohr = .true.
+    end if  
+  end subroutine parse_keyword
+
 end subroutine read_ascii
 
 subroutine get_nat_ascii(filename, nat)
