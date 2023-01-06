@@ -15,13 +15,15 @@ for file in test_dat/*.ascii; do
   genfile=$tempdir/${basefile}.gen
   vaspfile=$tempdir/${basefile}.vasp
   poscar=$tempdir/POSCAR
+  extxyz=$tempdir/${basefile}.extxyz
   comparefile=$tempdir/${basefile}.ascii
   rm -f $comparefile
   ./$tester $file $ciffile
   ./$tester $ciffile $poscar
   ./$tester $poscar $infile
   ./$tester $infile $vaspfile
-  ./$tester $vaspfile $genfile
+  ./$tester $vaspfile $extxyz
+  ./$tester $extxyz $genfile
   ./$tester $genfile $comparefile
   res=$(./../../executables/fingerprint-distance $file $comparefile)
   if python -c "exit(0 if $res < $tol else 1)"; then
