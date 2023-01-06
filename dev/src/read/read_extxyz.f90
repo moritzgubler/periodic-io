@@ -75,13 +75,15 @@ subroutine read_partial_extxyz(io, nat, rxyz, alat, atomnames, comment)
     do while (i <= nat)
       read(io, all_line_format, iostat = ios) all_line
       if ( ios/=0 ) then
+        print*, trim(all_line)
         print*, "error reading line: ", i
         stop
       end if
       if (iscommentorempty(all_line)) cycle
       read(all_line,*, iostat = ios) atomnames(i), rxyz(1,i), rxyz(2,i), rxyz(3,i)
       if ( ios/=0 ) then
-        print*, "error reading line: ", i
+        print*, trim(all_line)
+        print*, "error internal reading line: ", i
         stop
       end if
       i = i + 1
