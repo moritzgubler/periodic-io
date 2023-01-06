@@ -52,7 +52,7 @@ subroutine write_partial_extxyz(io, nat, rxyz, alat, atomnames)
   ! create comment
   write(ext_comment, '(a9, 8(g0.7, 1x), g0.7, 1a)') 'Lattice="', lat_A, '"'
 
-  propertystring = 'Properties="species:S:1:pos:R:3"'
+  propertystring = 'Properties=species:S:1:pos:R:3'
 
   ext_comment = trim(ext_comment) // ' ' // trim(propertystring)
 
