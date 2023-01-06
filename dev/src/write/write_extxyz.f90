@@ -1,4 +1,33 @@
-subroutine write_xyz(io, nat, rxyz, alat, atomnames, comment, energy, forces, stress)
+subroutine write_extxyz(filename, nat, rxyz, alat, atomnames, comment)
+  !! reads the position, lattice vecors and atomnames from a file. File format is
+  !! detected based on the file ending. Supported endings:
+  !! .ascii, .cif, .in, .gen, .qe, .vasp and POSCAR (vasp)
+  implicit none
+  character(len=*), intent(in) :: filename
+  !! filename of the file which is created
+  integer, intent(in) :: nat
+  !! number of atoms
+  real*8, dimension(3, nat), intent(in) :: rxyz
+  !! atom positions (bohr)
+  real*8, dimension(3, 3), intent(in) :: alat
+  !! lattice vectors (bohr)
+  character(len=2), intent(in) :: atomnames(nat)
+  !! String containing the chemical symbol of each atom.
+  character(len=80), intent(in) :: comment
+  integer :: io, ios
+
+  open(newunit=io, file=filename, iostat=ios)
+  if ( ios /= 0 ) then
+    stop 'error opening file write_extxyz'
+  end if
+
+  call write_partial_extxyz(io, nat, rxyz, alat, atomnames)
+
+  close(io)
+
+end subroutine write_extxyz
+
+subroutine write_partial_extxyz(io, nat, rxyz, alat, atomnames)
   !! writes xyz file. assumes units of rxyz are in bohr and writes them to file
   !! in a.u.
   implicit none
@@ -11,38 +40,24 @@ subroutine write_xyz(io, nat, rxyz, alat, atomnames, comment, energy, forces, st
   real(8), intent(in), dimension(3, 3) :: alat
   character(len=2), intent(in), dimension(nat) :: atomnames
   !! chemical symbol of the atoms
-  character(len=80), intent(in) :: comment
-  !! content that will be written to the comment line
-  real(8), optional :: energy
-  real(8), optional, dimension(3, nat) :: forces
-  real(8), optional, dimension(3, 3) :: stress
   integer :: ios, i
   real(8) :: Bohr_Ang = 0.52917721067
-  real(8) :: xyz_convert(3,nat)
+  real(8) :: xyz_convert(3,nat), lat_A(3,3)
   character(len=500) :: ext_comment
   character(len=100) :: propertystring
 
   xyz_convert = Bohr_Ang * rxyz
+  lat_A = Bohr_Ang * alat
 
   ! create comment
-  write(ext_comment, '(a9, 8(g0.7, 1x), g0.7, 1a)') 'Lattice="', alat(1,1), alat(2,1), alat(3,1), alat(1,2), alat(2,2), alat(3,2)&
-    , alat(1,3), alat(2,3), alat(3,3), '"'
+  write(ext_comment, '(a9, 8(g0.7, 1x), g0.7, 1a)') 'Lattice="', lat_A, '"'
 
-  if ( present(energy) ) then
-    write(ext_comment, '(a, a, g0.10)') trim(ext_comment), ' energy=', energy
-  end if
-  if ( present(stress) ) then
-    write(ext_comment, '(a7, 8(g0.7, 1x), g0.7, 1a)') 'stress="', stress, '"'
-  end if
-  if (present(forces)) then
-    propertystring = 'Properties="species:S:1:pos:R:3:forces:R:3"'
-  else
-    propertystring = 'Properties="species:S:1:pos:R:3:forces:R:3"'
-  end if
+  propertystring = 'Properties="species:S:1:pos:R:3"'
 
-  if(ios/=0) stop "error opening output file"
+  ext_comment = trim(ext_comment) // ' ' // trim(propertystring)
+
   write(io,*) nat
-  write(io,*) trim(comment)
+  write(io,*) trim(ext_comment)
   do i = 1, nat, 1
     write(io,*, iostat = ios) atomnames(i), xyz_convert(1,i), xyz_convert(2,i), xyz_convert(3,i)
     if ( ios/=0 ) then
@@ -51,4 +66,4 @@ subroutine write_xyz(io, nat, rxyz, alat, atomnames, comment, energy, forces, st
     end if
   end do
 
-end subroutine write_xyz
+end subroutine write_partial_extxyz
