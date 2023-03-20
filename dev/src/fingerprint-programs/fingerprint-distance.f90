@@ -21,6 +21,7 @@ program fingerprint_distance
   real(8), allocatable, dimension(:,:) :: fp1, fp2
   real(8), parameter :: width_cutoff = 4.d0
   integer, parameter :: grid_length = 40
+  real(8), parameter :: x_scale = 18.0_8
   real(8), allocatable :: fp1_grid(:, :), fp2_grid(:, :), x_grid(:)
   integer :: i, iat
 
@@ -82,7 +83,7 @@ program fingerprint_distance
   fp1_grid = 0.0d0
   fp2_grid = 0.0d0
   do i = 1, grid_length
-    x_grid(i) = 18*dble(i-1) / grid_length
+    x_grid(i) = x_scale * dble(i-1) / grid_length
   end do
   ! print*, maxval(fp1(:, 1))
   do iat = 1, nat1
