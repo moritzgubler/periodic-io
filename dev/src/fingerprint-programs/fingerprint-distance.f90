@@ -16,12 +16,13 @@ program fingerprint_distance
 
   logical :: is_periodic = .TRUE., f1periodic = .TRUE., f2periodic = .TRUE.
   character(len=10) :: filetype
-  integer, parameter :: natx_sphere = 120, ns = 1, np = 1
-  real(8) :: fp_dist
+  integer, parameter :: natx_sphere = 100, ns = 1, np = 1
+  real(8) :: fp_dist, fp_smooth
   real(8), allocatable, dimension(:,:) :: fp1, fp2
-  real(8), parameter :: width_cutoff = 3.d0
-  real(8) :: fp1_grid(100), fp2_grid(100), x_grid(100)
-  integer :: i
+  real(8), parameter :: width_cutoff = 4.d0
+  integer, parameter :: grid_length = 40
+  real(8), allocatable :: fp1_grid(:, :), fp2_grid(:, :), x_grid(:)
+  integer :: i, iat
 
   call get_command_argument(1,file1, status=stat)
   if ( stat/= 0 ) call help
@@ -66,6 +67,7 @@ program fingerprint_distance
 
 
   allocate(fp1((ns + 3*np)*natx_sphere, nat1), fp2((ns + 3*np)*natx_sphere, nat2))
+  allocate(fp1_grid(grid_length, nat1), fp2_grid(grid_length, nat2), x_grid(grid_length))
 
   if ( is_periodic ) then
     call back2cell(nat1, r1, lat1)
@@ -77,26 +79,73 @@ program fingerprint_distance
   end if
   call fingerprint(nat2, natx_sphere, ns, np, width_cutoff, lat2, r2, symb2, fp2)
 
-  fp1_grid = 0
-  fp2_grid = 0
-  do i = 1, 100
-    x_grid(i) = 10*dble(i) / 100
+  fp1_grid = 0.0d0
+  fp2_grid = 0.0d0
+  do i = 1, grid_length
+    x_grid(i) = 18*dble(i-1) / grid_length
   end do
-  print*, maxval(fp1(:, 1))
-  do i = 1, (ns + 3*np)*natx_sphere
-    fp1_grid = fp1_grid + sin( fp1(i, 1)*x_grid)
-    fp2_grid = fp2_grid + sin( fp1(i, 10)*x_grid)
-    write(60, *) i, fp1(i, 1), fp1(i, 10)
+  ! print*, maxval(fp1(:, 1))
+  do iat = 1, nat1
+    do i = 1, (ns + 3*np)*natx_sphere
+      fp1_grid(:, iat) = fp1_grid(:, iat) + sin( fp1(i, iat) * x_grid)
+      fp2_grid(:, iat) = fp2_grid(:, iat) + sin( fp2(i, iat) * x_grid)
+    end do
   end do
-  do i = 1, 100
-    write(50, *) x_grid(i), fp1_grid(i), fp2_grid(i)
-  end do
+
+  ! open(50, file='fp1.txt')
+  ! open(51, file='fp2.txt')
+  ! open(60, file='smooth_fp1.txt')
+  ! open(61, file='smooth_fp2.txt')
+
+  ! do i = 1, grid_length
+  !   write(60, *) x_grid(i), fp1_grid(i, :)
+  !   write(61, *) x_grid(i), fp2_grid(i, :)
+  ! end do
+  ! do i = 1, (ns + 3*np)*natx_sphere
+  !   write(50, *) i, fp1(i, :)
+  !   write(51, *) i, fp2(i, :)
+  ! end do
+
+  ! close(50)
+  ! close(51)
+  ! close(60)
+  ! close(61)
 
   call calc_fpd(nat1, natx_sphere, ns, np, fp1, fp2, fp_dist)
 
-  print*, fp_dist
+  call calc_fpd_smooth(nat1, grid_length, fp1_grid, fp2_grid, fp_smooth)
+  ! fp_dist = norm2(fp1(:, 1) - fp2(:, 1))
+  ! fp_smooth = norm2(fp1_grid(:, 1) - fp2_grid(:, 1))
+
+  print*, fp_dist, fp_smooth!, fp2_grid(:, 1), fp2_grid(:, 2), fp2_grid(:, 3), fp2_grid(:, 4)
 
 contains
+
+subroutine calc_fpd_smooth(nat, grid_length, fp1, fp2, fpd)
+  implicit none
+  integer :: nat
+  integer, intent(in) :: grid_length
+  real*8 :: fp1( grid_length, nat), fp2(grid_length, nat)
+  real*8 :: tt, cost1(nat, nat)
+  real *8 :: fpd
+  integer :: iat, jat, iassign(nat)
+
+
+  do iat = 1, nat
+    do jat = 1, nat
+      !tt = 0.d0
+      !do l = 1, (ns + 3*np)*natx_sphere
+      !  tt = tt + (fp1(l, iat) - fp2(l, jat))**2
+      !end do
+      !tt = sqrt(tt)
+      tt = norm2(fp1(:,iat) -fp2(:,jat))
+      cost1(iat, jat) = tt
+    end do
+  end do
+  call apc(nat, cost1, iassign, fpd)
+
+end subroutine calc_fpd_smooth
+
   subroutine help
     implicit none
     print*, ''
