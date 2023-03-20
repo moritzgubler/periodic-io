@@ -20,6 +20,8 @@ program fingerprint_distance
   real(8) :: fp_dist
   real(8), allocatable, dimension(:,:) :: fp1, fp2
   real(8), parameter :: width_cutoff = 3.d0
+  real(8) :: fp1_grid(100), fp2_grid(100), x_grid(100)
+  integer :: i
 
   call get_command_argument(1,file1, status=stat)
   if ( stat/= 0 ) call help
@@ -74,6 +76,21 @@ program fingerprint_distance
     call back2cell(nat2, r2, lat2)
   end if
   call fingerprint(nat2, natx_sphere, ns, np, width_cutoff, lat2, r2, symb2, fp2)
+
+  fp1_grid = 0
+  fp2_grid = 0
+  do i = 1, 100
+    x_grid(i) = 10*dble(i) / 100
+  end do
+  print*, maxval(fp1(:, 1))
+  do i = 1, (ns + 3*np)*natx_sphere
+    fp1_grid = fp1_grid + sin( fp1(i, 1)*x_grid)
+    fp2_grid = fp2_grid + sin( fp1(i, 10)*x_grid)
+    write(60, *) i, fp1(i, 1), fp1(i, 10)
+  end do
+  do i = 1, 100
+    write(50, *) x_grid(i), fp1_grid(i), fp2_grid(i)
+  end do
 
   call calc_fpd(nat1, natx_sphere, ns, np, fp1, fp2, fp_dist)
 
