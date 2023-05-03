@@ -44,7 +44,7 @@ target_link_libraries(${fingerprintlib} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRAR
 
 # Set Default install directory to $HOME/bin and $HOME/lib
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set (CMAKE_INSTALL_PREFIX $ENV{HOME}
+    set (CMAKE_INSTALL_PREFIX "./"
            CACHE PATH "default install path" FORCE)
 endif()
 install(TARGETS ${MAINLIB} DESTINATION lib)
