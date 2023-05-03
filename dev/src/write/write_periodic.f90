@@ -45,6 +45,8 @@ subroutine write_periodic(filename, nat, rxyz, alat, atomnames, comment)
     call write_vasp(filename, nat, rxyz, alat, atomnames, comment)
   case('alm')
     call write_alamode(filename, nat, rxyz, alat, atomnames, comment)
+  case('extxyz')
+    call write_extxyz(filename, nat, rxyz, alat, atomnames, comment)
   case default
     print*, "filetype,", filetype
     print*, "filename, ", trim(filename)

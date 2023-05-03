@@ -45,6 +45,8 @@ subroutine read_periodic(filename, nat, rxyz, alat, atomnames, comment)
     comment = ''
   case('vasp')
     call read_vasp(filename, nat, rxyz, alat, atomnames, comment)
+  case('extxyz')
+    call read_extxyz(filename, nat, rxyz, alat, atomnames, comment)
   case default
     print*, "filetype, ", filetype
     stop "unknown filetype read_periodic"
@@ -86,6 +88,8 @@ subroutine get_nat_periodic(filename, nat)
     call get_nat_dftb(filename, nat)
   case("vasp")
     call get_nat_vasp(filename, nat)
+  case('extxyz')
+    call get_nat_extxyz(filename, nat)
   case default
     print*, "filetype, ", filetype
     stop "unknown filetype get_nat_periodic"
