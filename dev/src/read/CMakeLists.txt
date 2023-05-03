@@ -1,4 +1,4 @@
-set(SOURCES ${SOURCES}
+set(SOURCES
     read_ascii.f90
     read_cif.f90
     read_dftb.f90
@@ -9,3 +9,5 @@ set(SOURCES ${SOURCES}
     read_vasp.f90
     read_xyz.f90
 )
+
+target_sources(${MAINLIB} PRIVATE ${SOURCES})

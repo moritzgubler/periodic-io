@@ -1,4 +1,4 @@
-set(SOURCES ${SOURCES}
+set(SOURCES
     write_alamode.f90
     write_ascii.f90
     write_cif.f90
@@ -10,3 +10,5 @@ set(SOURCES ${SOURCES}
     write_vasp.f90
     write_xyz.f90
 )
+
+target_sources(${MAINLIB} PRIVATE ${SOURCES})
