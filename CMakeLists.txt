@@ -40,7 +40,7 @@ endif()
   
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
-target_link_libraries(${MAINLIB} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(${fingerprintlib} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 
 # Set Default install directory to $HOME/bin and $HOME/lib
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
