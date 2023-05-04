@@ -1,7 +1,5 @@
-include(CMakePrintHelpers)
-
 cmake_minimum_required(VERSION 3.15.0)
-project (optimizer LANGUAGES Fortran C)
+project(periodicIO LANGUAGES Fortran C)
 
 # set paths to configure projects
 set(MAINLIB periodicIO)
@@ -37,7 +35,7 @@ find_package(OpenMP)
   if(OpenMP_Fortran_FOUND)
     target_link_libraries(${MAINLIB} PUBLIC OpenMP::OpenMP_Fortran)
 endif()
-  
+ 
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
 target_link_libraries(${fingerprintlib} PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
