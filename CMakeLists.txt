@@ -48,3 +48,7 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
            CACHE PATH "default install path" FORCE)
 endif()
 install(TARGETS ${MAINLIB} DESTINATION lib)
+
+enable_testing()
+# add test
+add_subdirectory("dev/test")
