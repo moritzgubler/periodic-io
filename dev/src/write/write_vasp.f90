@@ -103,7 +103,7 @@ subroutine write_vasp(filename, nat, rxyz, alat, atomnames, comment)
   end do
 
   ! write atomtypes
-  write(io, *, iostat=ios) atomtypes(1:ntypes)
+  write(io, "( *(a, 1x) )", iostat=ios) atomtypes(1:ntypes)
   if (ios /= 0 ) stop ' error writing atomtypes in moleculario'
 
   ! write atomcounts
