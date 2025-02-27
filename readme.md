@@ -19,13 +19,13 @@ Supported file formats:
 - .vasp POSCAR (vasp)
 
 Installation:
-Set your favorite fortran compiler in the makefile and the linking and
-compiling flags (no flags required).
-"make install" will compile everything in the src directory and install all the
-conversion tools to $HOME/bin.
-The library will be installed to
-$HOME/.local/lib/libmolecularIO.a.
-This is not on the $LIBRARY_PATH by default.
+The library can be compiled with
+```
+mkdir build && cd build
+cmake ..
+make
+make install # optional
+```
 
 You will now be able to convert files with
 "ascii2in file1.ascii new_file.in" etc.
